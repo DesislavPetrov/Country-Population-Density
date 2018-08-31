@@ -1,0 +1,60 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8" />
+    <script src='https://api.mapbox.com/mapbox-gl-js/v0.47.0/mapbox-gl.js'></script>
+    <link rel="stylesheet" type="text/css" href="style.css"> 
+    <link href='https://api.mapbox.com/mapbox-gl-js/v0.47.0/mapbox-gl.css' rel='stylesheet' />
+    <title></title>
+</head>
+<body>
+    <div id="map">
+    </div>
+    <div class="map-overlay" id="features"<h2>US Population</h2><div id="pd"><p>Hover over a state!</p></div></div>
+    <div class="map-overlay" id="legend"></div>
+    <script>
+        mapboxgl.accessToken = 'pk.eyJ1IjoiZ2VvY2FkZGVyIiwiYSI6ImNqanE2ejV1aTA3dXozcGxxaDRlcjVmN2wifQ.2Gpftu5ybKxj_MHfk56FLw';
+        var map = new mapboxgl.Map({
+            container: 'map', // container id
+            style: 'mapbox://styles/geocadder/cjle456ji7wso2sm24s7u0etu' // replace this with your style URL
+        });
+        map.on('load', function () {           
+            var layers = ['0-10', '10-20', '20-50', '50-100', '100-200', '200-500', '500-1000', '1000+'];
+            var colors = ['#FFEDA0', '#FED976', '#FEB24C', '#FD8D3C', '#FC4E2A', '#E31A1C', '#BD0026', '#800026'];
+
+            for (i = 0; i < layers.length; i++) {
+                var layer = layers[i];
+                var color = colors[i];
+                var item = document.createElement('div');
+                var key = document.createElement('span');
+                key.className = 'legend-key';
+                key.style.backgroundColor = color;
+
+                var value = document.createElement('span');
+                value.innerHTML = layer;
+                item.appendChild(key);
+                item.appendChild(value);
+                legend.appendChild(item);
+            }
+
+            map.on('mousemove', function (e) {
+                var states = map.queryRenderedFeatures(e.point, {
+                    layers: ['statedata']
+                });
+
+                if (states.length > 0) {
+                    document.getElementById('pd').innerHTML = '<h3><strong>' + states[0].properties.name + '</strong></h3><p><strong><em>' + states[0].properties.density + '</strong> people per square mile</em></p>';
+                } else {
+                    document.getElementById('pd').innerHTML = '<p>Hover over a state!</p>';
+                }
+            });
+
+            map.getCanvas().style.cursor = 'default';
+
+            map.fitBounds([[-133.2421875, 16.972741], [-47.63671875, 52.696361]]);
+            
+        });        
+    </script>
+</body>
+</html>
